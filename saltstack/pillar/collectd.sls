@@ -1,0 +1,201 @@
+collectd:
+  FQDNLookup: true
+  TypesDB: ['/usr/share/collectd/types.db']
+  types:
+    - 'jmx_memory  value:GAUGE:0:U'
+  plugins:
+    default: [battery, cpu, entropy, load, memory, swap, users]
+    curl_json:
+      Url "http://127.0.0.1/status?json":
+        instance: php-fpm
+        keys:
+          start since:
+            type: uptime
+          accepted conn:
+            type: http_requests
+          listen queue:
+            type: phpfpm_listen_queue
+          listen queue len:
+            type: phpfpm_listen_queue
+          max listen queue:
+            type: phpfpm_listen_queue
+          idle processes:
+            type: phpfpm_processes
+          active processes:
+            type: phpfpm_processes
+          total processes:
+            type: phpfpm_processes
+          max active processes:
+            type: phpfpm_processes
+          max children reached:
+            type: phpfpm_processes
+          slow requests:
+            type: phpfpm_slow_requests
+    apache:
+      instances:
+        - name: name
+          url: 'http://localhost/server-status?auto'
+          user: user
+          pass: pass
+    dbi:
+      queries:
+        - name: mysql_user_connections
+          statement: SELECT user, count(*) as nof_connections FROM information_schema.processlist GROUP BY user
+          results:
+            - type: gauge
+              instancePrefix: mysql_user_connections
+              instancesFrom: user
+              valuesFrom: nof_connections
+      databases:
+        - name: name
+          driver: mysql
+          queries:
+            - mysql_user_connections
+          driverOptions:
+            - name: host
+              value: {{ salt['grains.get']('ip4_interfaces:eth1')[0] }}
+            - name: username
+              value: user
+            - name: password
+              value: pass
+    exec:
+      - Exec "myuser:mygroup" "myprog"
+      - Exec "otheruser" "/path/to/another/binary" "arg0" "arg1"
+      - NotificationExec "user" "/usr/lib/collectd/exec/handle_notification"
+    syslog:
+      loglevel: info
+    network:
+      host: 'logstash'
+      port: 25826
+      securitylevel: 'Encrypt'
+      username: 'user'
+      password: 'password'
+    mysql:
+      databases:
+        - host: 'foo'
+          port: '3306'
+          user: 'myuser'
+          pass: 'mypass'
+          name: 'mydb'
+          masterstats: true
+        - host: 'foo'
+          name: 'mydb'
+          socket: '/var/run/mysql/mysqld.sock'
+          slavestats: true
+          slavenotifications: true
+    postgresql:
+      databases:
+        - host: 'localhost'
+          port: '5432'
+          user: 'myuser'
+          pass: 'mypass'
+          name: 'mydb'
+    powerdns:
+      socket: '/var/run/pdns.controlsocket'
+    df:
+      Devices:
+        - 'md1'
+        - 'md2'
+      MountPoints:
+        - '/home'
+      FSTypes:
+        - 'ext4'
+        - 'tmpfs'
+      IgnoreSelected: false
+      ReportByDevice:
+      ReportReserved:
+      ReportInodes:
+    ntpd:
+      host: localhost
+      port: 123
+      ReverseLookups: 'false'
+    java:
+      host: localhost
+      port: 17264
+      user: ''
+      pass: ''
+      lib: '/usr/lib/jvm/java-7-oracle/jre/lib/amd64/libjava.so'
+    ethstat:
+      interface: 'eth0'
+    interface:
+      interfaces: ['eth0', 'lo0']
+      IgnoreSelected: 'false'
+    # defaults as of 20141103
+    ping:
+      hosts: ['google.com', 'yahoo.com']
+      #interval: 1.0
+      #timeout: 0.9
+      #ttl: 64
+      #sourceaddress: 10.0.1.1
+      #device: eth0
+      #maxmissed: -1
+    disk:
+      matches: ['/^[hs]d[a-f][0-9]?$/']
+    write_graphite:
+      host: graphite-host
+      port: "2003"
+      prefix: "collectd"
+      postfix: ""
+      logsenderrors: false
+      escapecharacter: "_"
+      separateinstances: true
+      storerates: true
+      alwaysappendds: false
+    processes:
+      - java
+      - python
+    statsd:
+      host: localhost
+      port: 8125
+    tail:
+      - file: '/var/log/exim4/mainlog'
+        instance: exim
+        match:
+          - instance: 'total'
+            dstype: 'CounterAdd'
+            type: 'ipt_bytes'
+            regex: 'S=([1-9][0-9]*)'
+          - instance: 'local_user'
+            dstype: 'CounterInc'
+            type: 'counter'
+            regex: '\\<R=local_user\\>'
+    md:
+      Device: ['md1', 'md2']
+      IgnoreSelected: false
+    librato:
+      user: example@example.com
+      token: deadbeef
+    python:
+      Globals: true
+      ModulePath: "/usr/share/collectd/modules"
+      LogTraces: true
+      Interactive: false
+      modules:
+        module_name
+          variables:
+            var1: value1
+            var2: value2
+    extra:
+      cpu:
+        ReportByCpu: false
+    tcpconns:
+      listening_ports: 'true'
+      local_ports: []
+      remote_ports: []
+    openvpn:
+      status_file:
+        - "/var/log/openvpn/openvpn-status.log"
+      individual_users: 'false'
+      user_count: 'true'
+      compression: 'false'
+      improved_naming_scheme: 'true'
+    rabbitmq:
+      username: 'guest'
+      password: 'guest'
+      realm: 'RabbitMQ Management'
+      host: 'localhost'
+      port: 15672
+      ignore_queue_regex:
+        - '^queue'
+      ignore_exchange_regex:
+        - '^exchange'

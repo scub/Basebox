@@ -1,0 +1,21 @@
+[submodule "saltstack/formulas/openssh-formula"]
+	path = saltstack/formulas/openssh-formula
+	url = https://github.com/saltstack-formulas/openssh-formula.git
+[submodule "saltstack/formulas/fail2ban-formula"]
+	path = saltstack/formulas/fail2ban-formula
+	url = https://github.com/saltstack-formulas/fail2ban-formula
+[submodule "saltstack/formulas/haveged-formula"]
+	path = saltstack/formulas/haveged-formula
+	url = https://github.com/saltstack-formulas/haveged-formula.git
+[submodule "saltstack/formulas/collectd-formula"]
+	path = saltstack/formulas/collectd-formula
+	url = https://github.com/saltstack-formulas/collectd-formula.git
+[submodule "saltstack/formulas/iptables-formula"]
+	path = saltstack/formulas/iptables-formula
+	url = https://github.com/saltstack-formulas/iptables-formula.git
+[submodule "saltstack/formulas/ntp-formula"]
+	path = saltstack/formulas/ntp-formula
+	url = https://github.com/saltstack-formulas/ntp-formula.git
+[submodule "saltstack/formulas/rsyslog-formula"]
+	path = saltstack/formulas/rsyslog-formula
+	url = https://github.com/saltstack-formulas/rsyslog-formula.git
